@@ -1,0 +1,3 @@
+../Core/Src/functions.c:11:6:ledBlink	24	static
+../Core/Src/functions.c:18:6:pwmBlink	16	static
+../Core/Src/functions.c:30:6:initDigital	64	static

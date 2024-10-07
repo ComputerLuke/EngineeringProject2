@@ -1,0 +1,36 @@
+Locations of HAL API pin configuration:
+	LED/Digital:
+		main.c: MX_GPIO_Init()
+	Timers:
+		stm32g0xx_hal_msp.c: HAL_TIM_MspPostInit()
+
+Use HAL_GPIO_DeInit(port, pin); to deinitialise (pre-)set pins.
+
+General structure of initialising a GPIO pin with HAL API:
+	
+	Digital:
+		GPIO_InitTypeDef GPIO_structure = {0}; // GPIO details list
+		
+		__HAL_RCC_GPIOX_CLK_ENABLE(); // enables clock for pin where "X" in "GPIOX" is the port letter of the pin
+		
+		HAL_GPIO_WritePin(port, pin, 0); // set pin to output nothing
+		
+		GPIO_InitStruct.Pin = pin; // pin number
+		GPIO_InitStruct.Mode = GPIO_MODE_X; // where X is OUTPUT_PP for output or INPUT for input
+		GPIO_InitStruct.Pull = GPIO_X; // where X is NOPULL usually for output or PULLUP for a physical input (e.g. a button)
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_X; // not needed for input, determines whether to use high-speed clock or low-speed clock, where X is HIGH or LOW depending on how fast it should change state/value
+		HAL_GPIO_Init(port, &GPIO_structure); // where port is "GPIOX", where X is the port letter
+	
+	Timer (PWM):
+		GPIO_InitTypeDef GPIO_structure = {0};
+		
+		__HAL_RCC_GPIOX_CLK_ENABLE();
+		
+		GPIO_InitStruct.Pin = pin;
+	    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP; // for output only
+	    GPIO_InitStruct.Pull = GPIO_NOPULL; // for output only
+	    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW; // change HIGH or LOW clock depending on how frequently the state changes
+	    GPIO_InitStruct.Alternate = GPIO_AF2_TIM2; // timer clock
+	    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+Use HAL_GPIO_ReadPin(port, pin); to get digital output of a pin (0 or 1)
